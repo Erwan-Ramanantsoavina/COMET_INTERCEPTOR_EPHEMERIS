@@ -1,0 +1,80 @@
+version: '3.0'    
+
+# Spacetime configuration
+spacetime: 
+  system: BCRS    # Barycentric Celestial Reference System , standard for
+                  # solar system dynamics    
+
+ephemeris:
+  - name: de432                     # Name of the ephemeris, used for reference in this universe object
+    files:                          # Paths of ephemeris files to load. Some file type combinations can be loaded together...
+      - /home/dcas/erw.ramanantsoavina/Documents/CI_EPHEMERIS/Universe/de432.bsp
+    cache: True                     # (optional, default True) Whether to cache kernels to memory
+  - name: gm431                     # ...otherwise files of different types are loaded in separate blocks
+    files:
+      - /home/dcas/erw.ramanantsoavina/Documents/CI_EPHEMERIS/Universe/gm_431.tpc
+
+frames:
+
+  - name: ephem1          # Name of the model
+    type: Ephem           # Type of the model
+    config:               # Configuration of the Ephem model
+      source: de432       # Ephemerides source
+
+  - name: SEROT
+    type: AxesLocalOrbital
+    config:
+      center: Sun
+      target: Earth
+      axes: Pos
+
+  - name: EMROT
+    type: AxesLocalOrbital
+    config:
+      center: Earth
+      target: Moon
+      axes: Pos
+
+  - name: SunICRF
+    type: AxesOrient
+    config:
+      model: EMCJ2000
+
+constants:
+  ephemeris:
+    - source: gm431
+  data :
+    EarthGM: 398600.4418
+    SunGM: 132712440018
+    MoonGM: 4902.7779
+    EarthSOI: 3000000 
+
+bodies:
+  - name: Earth
+    point: Earth
+  - name: Sun
+    point: Sun
+  - name: Moon
+    point: Moon
+
+gravity:
+  - name: gravEMS
+    bodies:
+    - Sun
+    - Earth
+    - Moon
+
+dynamics:
+  - name: EMS_gravity
+    type: SystemGravity
+    config:
+      model: gravEMS
+
+
+spacecraft:
+  - name: SC
+    mass: 1 kg
+    thrusters:
+      - name: main
+        thrust: 1 N
+        isp : 1 s
