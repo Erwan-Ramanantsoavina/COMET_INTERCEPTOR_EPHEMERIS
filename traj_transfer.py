@@ -24,15 +24,15 @@ universe = cosmos.Universe( config_uni )
 x0_halo_cr3bp = np.array([ 1.00737013  , 0.    ,     -0.00292083 , 0.     ,     0.01298799 , 0.        ])
 T_halo_cr3bp = 3.0860603629916086
 
-x1 = np.array([ 1.01102399e+00 , 8.48613753e-05 , 3.95486800e-03 , -1.63511915e-04 , -1.09131726e-02 , -1.28616305e-03])
-x2 = np.array([ 1.00002001e+00 , -1.90647573e-04 , 7.04645004e-04 , 8.73703667e-02 , -2.38632662e-02 , -5.47251965e-02])
-t1 = 4.157809328262431
-t2 = 5.374938412849788
-m= 0.49745782300811253
+x1 = np.array([ 1.0101854  , 0.0042264  , 0.00291068 , 0.00379671,-0.00747858 , 0.00440514])
+x2 = np.array([ 8.51890690e-01 ,-5.79894407e-01, -1.09359147e-03 , 4.86808647e-02 ,-9.10482459e-05 ,-1.45310974e-02])
+t1 = 9.93422053491789
+t2 = 3.7089443024530797
+m = 0.35743742856479127
 
-date_fly_by = tempo.Epoch('2025-10-22T04:48:00.0 TDB')
+date_fly_by = tempo.Epoch('2028-12-26T04:48:00.0 TDB')
 
-n_pt_traj = 3
+n_pt_traj = 4
 
 
 
@@ -136,8 +136,12 @@ ip = pg.ipopt()
 ip.set_numeric_option("tol",1e-3)
 algo = pg.algorithm(ip)
 algo.set_verbosity(1)
-pop = algo.evolve(pop)
 
+# slsqp = pg.scipy_optimize(method="SLSQP" , tol=1e-3)
+# algo = pg.algorithm(slsqp)
+
+
+pop = algo.evolve(pop)
 #################################################################################
 # Solution
 traj2.compute(partials=False)
@@ -159,7 +163,7 @@ ax.grid(True)
 
 ax.set_xlabel(r'$X$ (km)')
 ax.set_ylabel(r'$Y$ (km)')
-ax.set_title("Intertial XY")
+ax.set_title("Inertial XY")
 
 # Grille temporelle
 print(traj2.point('ctr0a'))
@@ -173,7 +177,7 @@ for E_ in E_grid:
 XROT = np.array(XROT)
 
 # Temps des manoeuvres
-t_m2 = traj2.point('ctr2a')
+t_m2 = traj2.point(f'ctr{n_pt_traj}a')
 
 # Séparation des segments
 seg1 = XROT[XROT[:, 0] <= t_m2.mjd()]   # avant 2e manoeuvre
@@ -185,6 +189,8 @@ ax.plot(seg2[:, 1], seg2[:, 2], color='blue' , label='Lambert arc')
 
 # Point final (intercept)
 x_final, y_final = XROT[-1, 1], XROT[-1, 2]
+final_vect = universe.frames.vector6('Sun' , 'SC_center' , 'SunICRF' , traj2.point('end_pointa'))
+print(final_vect)
 ax.scatter(x_final, y_final, marker='x', s=50,  color='red', label='Intercept point', zorder=5)
 
 # Terre

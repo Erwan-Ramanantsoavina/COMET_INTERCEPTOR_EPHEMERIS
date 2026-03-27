@@ -13,7 +13,7 @@ import time, os, copy
 import pygmo as pg
 import midas
 from transfer_ephe import *
-
+from totalDV import *
 
 c_util.suppressLogger()
 
@@ -48,12 +48,15 @@ date_start_from_halo = date_fly_by - tof_secondes
 period_secondes = T_halo_cr3bp * T_SUN_EARTH/2/np.pi
 date_start = date_start_from_halo - m * period_secondes
 
-n_pt = 10
+n_pt = 4
 n_orb = 1
 
-dx = 5e6
+dv_halo = totalDV_halo(n_pt*n_orb , universe)
+universe.evaluables.add('TotalDV_halo' , dv_halo)
+
+dx = 100000
 dv = 0.2
-scales_vect = [dx, dx, dx, dv, dv, dv]
+scales_vect = [ 2000000, 870000 , 600000, dv, dv, dv]
 delta_vect = np.array([dx, dx, dx, dv , dv , dv])
 
 config_traj , config_prob = config_halo(x0_halo_cr3bp , T_halo_cr3bp , date_start , n_pt , n_orb , scales_vect , delta_vect)
@@ -101,7 +104,8 @@ conf_traj2 , conf_prob , conf_prob2 = config_trajectory(x , date_start_from_halo
 
 config_uni = util.load_yaml('Universe/universe.yml')
 universe = cosmos.Universe( config_uni )
-
+dv_traj = totalDV_traj(universe)
+universe.evaluables.add('TotalDV_traj' , dv_traj)
 traj2 = cosmos.Trajectory(universe, conf_traj2)
 
 prob2 = cosmos.Problem(universe, [traj2], conf_prob2, useGradient=True)
@@ -157,12 +161,12 @@ for cp in cp_names:
 
     ax.scatter(
         x_cp[0], x_cp[1],
-        s=40,
-        color='black',
+        s=25,
+        color='green',
         marker='o',
         zorder=6
     )
 
-plt.tight_layout()
+#plt.tight_layout()
 
 plt.show()

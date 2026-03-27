@@ -299,7 +299,7 @@ def config_trajectory(x0_halo_ephe , date_start , x1_cr3bp , x2_cr3bp , t1_cr3bp
 
     # Le vecteur dv1
     # FF.append('ctr0a_dt')
-    # FF.append('man_injection_dt')
+    
     FF.append('man_injection_dv_x')
     FF.append('man_injection_dv_y')
     FF.append('man_injection_dv_z')
@@ -331,7 +331,6 @@ def config_trajectory(x0_halo_ephe , date_start , x1_cr3bp , x2_cr3bp , t1_cr3bp
         FF2.append('ctr'+str(i)+'a_SC_center_vel_z')   
 
     # Le vecteur dv2
-    #FF.append('man_dsm_dt')
     FF.append('man_dsm_dv_x')
     FF.append('man_dsm_dv_y')
     FF.append('man_dsm_dv_z')
@@ -356,6 +355,11 @@ def config_trajectory(x0_halo_ephe , date_start , x1_cr3bp , x2_cr3bp , t1_cr3bp
     FF.append('ctr'+str(2*n_pt)+'a_SC_center_vel_x')
     FF.append('ctr'+str(2*n_pt)+'a_SC_center_vel_y')
     FF.append('ctr'+str(2*n_pt)+'a_SC_center_vel_z')
+
+    # FF.append('man_injection_dt')
+    # FF.append('man_dsm_dt')
+    # FF2.append('man_injection_dt')
+    # FF2.append('man_dsm_dt')
 
     FF2.append('ctr'+str(2*n_pt)+'a_SC_dv')       
     FF2.append('ctr'+str(2*n_pt)+'a_SC_center_vel_x')
